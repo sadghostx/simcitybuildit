@@ -78,8 +78,8 @@ RECIPES = {
     "Shoes": {"ing": {"Textiles": 2, "Glue": 1, "Measuring Tape": 1}, "t": 75, "b": "Fashion Store"},
     "Watch": {"ing": {"Plastic": 2, "Glass": 1, "Chemicals": 1}, "t": 90, "b": "Fashion Store"},
     "Business Suits": {"ing": {"Textiles": 3, "Glue": 1, "Measuring Tape": 1}, "t": 210, "b": "Fashion Store"},
-    "Backpack": {ing": {"Textiles": 2, "Plastic": 2, "Measuring Tape": 1}, "t": 150, "b": "Fashion Store"},
-    "Gift Sled": {ing": {"Star Decoration": 3, "Chair": 1, "Festive Wreath": 1}, "t": 150, "b": "Fashion Store"},
+    "Backpack": {"ing": {"Textiles": 2, "Plastic": 2, "Measuring Tape": 1}, "t": 150, "b": "Fashion Store"},
+    "Gift Sled": {"ing": {"Star Decoration": 3, "Chair": 1, "Festive Wreath": 1}, "t": 150, "b": "Fashion Store"},
 
     # -- DONUT SHOP --
     "Donuts": {"ing": {"Flour Bag": 1, "Sugar & Spices": 1}, "t": 45, "b": "Donut Shop"},
