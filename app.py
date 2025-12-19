@@ -98,32 +98,100 @@ st.set_page_config(layout="wide", page_title="SimCity BuildIt Planner by sgx")
 st.markdown(
     f"""
 <style>
-    .stApp {{ background-color: #F7FAFC !important; }}
-    .flex-grid {{
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-        max-width: {MAX_GRID_WIDTH};
-        margin: auto;
+    /* 1. Global App & Background */
+    .stApp {{ 
+        background-color: #F7FAFC !important; 
     }}
+    
+    /* Global Font Size Reduction for Mobile */
+    html, body, [class*="css"] {{ 
+        font-size: 13px !important; 
+    }}
+
+    /* 2. Grid & Row Alignment Fixes */
+    [data-testid="stHorizontalBlock"] {{
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important; /* Forces side-by-side */
+        align-items: stretch !important; /* Fixes vertical misalignment */
+        gap: 8px !important;
+        margin-bottom: 10px !important;
+    }}
+    
+    [data-testid="column"] {{
+        flex: 1 1 auto !important;
+        width: fit-content !important;
+        min-width: 0; /* Prevents columns from overflowing */
+    }}
+
+    /* 3. The Tile Card */
     .tile-card {{
         background: white;
         border: 1px solid #ddd;
         border-radius: 10px;
         width: 100%;
-        margin-bottom: 20px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        height: 100%; /* Makes all tiles in a row equal height */
+        margin-bottom: 15px;
+        padding: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        display: flex;
+        flex-direction: column;
     }}
+    
     .tile-header {{
-        padding: 15px;
-        border-radius: 10px 10px 0 0;
+        padding: 10px;
+        border-radius: 8px 8px 0 0;
         text-align: center;
         font-weight: bold;
+        font-size: 14px;
+        margin: -8px -8px 10px -8px; /* Flushes header to edges */
     }}
-    .tile-header-main {{ font-size: 24px; }}
-    /* Hide number buttons */
-    button[step] {{ display: none !important; }}
-    input[type=number] {{ -moz-appearance: textfield !important; text-align: center !important; }}
+
+    /* 4. Mobile Widget Optimization */
+    /* Shrink Selectboxes */
+    .stSelectbox div[data-baseweb="select"] {{
+        font-size: 12px !important;
+        min-height: 32px !important;
+    }}
+    
+    /* Shrink Number Inputs & Hide Arrows */
+    .stNumberInput input {{
+        height: 32px !important;
+        font-size: 12px !important;
+        -moz-appearance: textfield !important; 
+        text-align: center !important;
+        padding: 0 !important;
+    }}
+    
+    /* Hide the [+] and [-] buttons on number inputs to save space */
+    button[step] {{ 
+        display: none !important; 
+    }}
+
+    /* Tighten Checkboxes (Priority/Done) */
+    [data-testid="stCheckbox"] {{
+        margin-bottom: 0px !important;
+        padding: 2px !important;
+        min-height: 0px !important;
+    }}
+    
+    [data-testid="stCheckbox"] label p {{
+        font-size: 12px !important;
+        margin-bottom: 0px !important;
+    }}
+
+    /* Adjust Tab Font Size */
+    button[data-baseweb="tab"] p {{
+        font-size: 14px !important;
+    }}
+
+    /* Button Styling */
+    .stButton button {{
+        font-size: 12px !important;
+        padding: 2px 10px !important;
+        min-height: 30px !important;
+    }}
+
 </style>
 """,
     unsafe_allow_html=True,
@@ -147,50 +215,65 @@ with st.sidebar:
             "P", 0, 999, key=f"prd_{itm}", label_visibility="collapsed"
         )
 
-
-# --- 5. RENDER FUNCTION (The Standardized Version) ---
+# --- 5. RENDER FUNCTION (Fixed & Optimized) ---
 def render_tile(line1, line2, key, color="#FFFFFF", icon="", can_add=False, is_res=False):
-    # Get current slot count from session state
-    slot_key = f"slots_{key}"
-    if slot_key not in st.session_state:
+    # 1. Create a truly unique ID to prevent Duplicate Key Errors
+    unique_id = f"{key}_{line1.lower().replace(' ', '')}"
+    
+    # 2. Manage Slot Count in Session State
+    slot_key = f"slots_{unique_id}"
+    if slot_key not in st.session_state: 
         st.session_state[slot_key] = 3
     
     slot_count = st.session_state[slot_key]
     items = []
-    is_done = st.session_state.get(f"done_{key}", False)
-    
+
     with st.container():
-        # Open Tile Div
+        # Open Tile Div with Custom Styling
         st.markdown(f'<div class="tile-card"><div class="tile-header" style="background:{color}">{icon} {line1} - {line2}</div>', unsafe_allow_html=True)
         
-        # Region selection for Residential
+        # Region selection for Residential only
         if is_res:
-            st.selectbox("Region", REGIONS, key=f"reg_{key}", label_visibility="collapsed")
+            st.selectbox("Region", REGIONS, key=f"reg_{unique_id}", label_visibility="collapsed")
             
+        # --- PRIORITY AND DONE ON ONE LINE ---
         c1, c2 = st.columns(2)
-        prio = c1.checkbox("Priority", key=f"prio_{key}", disabled=is_done)
-        done = c2.checkbox("Done", key=f"done_{key}")
+        with c1:
+            prio = st.checkbox("Prio", key=f"prio_{unique_id}")
+        with c2:
+            done = st.checkbox("Done", key=f"done_{unique_id}")
 
-        # Side-by-side Item and Qty rows
+        # --- ITEM AND QTY ROWS (SAME LINE) ---
         for i in range(slot_count):
-            row_col1, row_col2 = st.columns([2, 1]) 
-            
-            with row_col1:
-                itm = st.selectbox("Item", ITEM_LIST, key=f"{key}_i{i}", label_visibility="collapsed", disabled=done)
-            
-            with row_col2:
-                qty = st.number_input("Qty", 0, 99, key=f"{key}_q{i}", label_visibility="collapsed", disabled=done)
-            
+            col_item, col_qty = st.columns([3, 1])
+            with col_item:
+                itm = st.selectbox(
+                    "Item", ITEM_LIST, 
+                    key=f"item_{unique_id}_{i}", 
+                    label_visibility="collapsed", 
+                    disabled=done
+                )
+            with col_qty:
+                qty = st.number_input(
+                    "Qty", 0, 99, 
+                    key=f"qty_{unique_id}_{i}", 
+                    label_visibility="collapsed", 
+                    disabled=done
+                )
+
+            # Collect data if item is selected and tile isn't 'done'
             if itm and qty > 0 and not done:
-                items.append({"item": itm, "qty": qty, "priority": prio})
+                items.append({"item": itm, "qty": qty, "priority": prio, "source": line2})
         
-        # Add Item Button (Works for Epic and Residential)
+        # --- ADD ITEM BUTTON ---
         if can_add and not done:
-            if st.button("＋ Add Slot", key=f"btn_{key}"):
+            # use_container_width makes it easier to tap on mobile
+            if st.button("＋ Add Slot", key=f"btn_{unique_id}", use_container_width=True):
                 st.session_state[slot_key] += 1
                 st.rerun()
                 
         st.markdown('</div>', unsafe_allow_html=True)
+        
     return items
 
 # --- 6. MAIN APP LOGIC ---
