@@ -173,7 +173,7 @@ def render_tile(line1, line2, key, color="#FFFFFF", icon="", can_add=False, is_r
 
         # Side-by-side Item and Qty rows
         for i in range(slot_count):
-            row_col1, row_col2 = st.columns([3, 1]) 
+            row_col1, row_col2 = st.columns([2, 1]) 
             
             with row_col1:
                 itm = st.selectbox("Item", ITEM_LIST, key=f"{key}_i{i}", label_visibility="collapsed", disabled=done)
