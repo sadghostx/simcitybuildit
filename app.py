@@ -45,6 +45,7 @@ RECIPES = {
     "Cooking Utensils": {"ing": {"Metal": 2, "Plastic": 2, "Wood": 2}, "t": 45, "b": "Hardware Store"},
     "Ladder": {"ing": {"Metal": 2, "Planks": 2}, "t": 60, "b": "Hardware Store"},
     "Drill": {"ing": {"Metal": 2, "Plastic": 2, "Electrical Components": 1}, "t": 120, "b": "Hardware Store"},
+    "Drill": {"ing": {"Star Decoration": 1, "Wood": 2}, "t": 120, "b": "Hardware Store"},
 
     # -- FARMER'S MARKET --
     "Vegetables": {"ing": {"Seeds": 2}, "t": 20, "b": "Farmer's Market"},
@@ -53,6 +54,8 @@ RECIPES = {
     "Cream": {"ing": {"Animal Feed": 1}, "t": 75, "b": "Farmer's Market"},
     "Cheese": {"ing": {"Animal Feed": 2}, "t": 105, "b": "Farmer's Market"},
     "Beef": {"ing": {"Animal Feed": 3}, "t": 150, "b": "Farmer's Market"},
+    "Sock Decoration": {"ing": {"Star Decoration": 1, "Gift": 1, "Nails": 1}, "t": 150, "b": "Farmer's Market"},
+
 
     # -- FURNITURE STORE --
     "Chairs": {"ing": {"Wood": 2, "Nails": 1, "Hammer": 1}, "t": 20, "b": "Furniture Store"},
@@ -60,6 +63,23 @@ RECIPES = {
     "Home Textiles": {"ing": {"Textiles": 2, "Measuring Tape": 1}, "t": 75, "b": "Furniture Store"},
     "Cupboard": {"ing": {"Planks": 2, "Glass": 2, "Paint": 1}, "t": 45, "b": "Furniture Store"},
     "Couch": {"ing": {"Textiles": 3, "Drill": 1, "Glue": 1}, "t": 150, "b": "Furniture Store"},
+
+# -- GARDENING SUPPLIES --
+    "Grass": {"ing": {"Seeds": 1, "Shovel": 1}, "t": 30, "b": "Gardening Supplies"},
+    "Tree Saplings": {"ing": {"Seeds": 2, "Shovel": 1}, "t": 90, "b": "Gardening Supplies"},
+    "Garden Furniture": {"ing": {"Planks": 2, "Plastic": 2, "Textiles": 2}, "t": 135, "b": "Gardening Supplies"},
+    "Fire Pit": {"ing": {"Bricks": 2, "Shovel": 1, "Cement": 2}, "t": 240, "b": "Gardening Supplies"},
+    "Lawn Mower": {"ing": {"Metal": 3, "Electrical Components": 1, "Paint": 1}, "t": 120, "b": "Gardening Supplies"},
+    "Garden Gnome": {"ing": {"Cement": 2, "Glue": 1}, "t": 90, "b": "Gardening Supplies"},
+    "Festive Wreath": {"ing": {"Star Decoration": 2, "Sock Decoration": 1, "Hammer": 1}, "t": 90, "b": "Gardening Supplies"},
+
+	# -- FASHION STORE --
+    "Cap": {"ing": {"Textiles": 2, "Measuring Tape": 1}, "t": 60, "b": "Fashion Store"},
+    "Shoes": {"ing": {"Textiles": 2, "Glue": 1, "Measuring Tape": 1}, "t": 75, "b": "Fashion Store"},
+    "Watch": {"ing": {"Plastic": 2, "Glass": 1, "Chemicals": 1}, "t": 90, "b": "Fashion Store"},
+    "Business Suits": {"ing": {"Textiles": 3, "Glue": 1, "Measuring Tape": 1}, "t": 210, "b": "Fashion Store"},
+    "Backpack": {ing": {"Textiles": 2, "Plastic": 2, "Measuring Tape": 1}, "t": 150, "b": "Fashion Store"},
+    "Gift Sled": {ing": {"Star Decoration": 3, "Chair": 1, "Festive Wreath": 1}, "t": 150, "b": "Fashion Store"},
 
     # -- DONUT SHOP --
     "Donuts": {"ing": {"Flour Bag": 1, "Sugar & Spices": 1}, "t": 45, "b": "Donut Shop"},
@@ -87,7 +107,7 @@ RECIPES = {
 SHOP_COLORS = {
     "Factory": "#E0E0E0", "Building Supplies": "#FFCCBC", "Hardware Store": "#D1C4E9",
     "Farmer's Market": "#C8E6C9", "Furniture Store": "#BBDEFB", "Donut Shop": "#F8BBD0",
-    "Fast Food": "#FFF9C4"
+    "Fast Food": "#FFF9C4""Fashion Store": "#D1C4E9"  # A light purple/lavender "Gardening Supplies": "#A5D6A7"
 }
 SHOPS = sorted(list(set(details["b"] for details in RECIPES.values())))
 ITEM_LIST = [""] + sorted(list(RECIPES.keys()))
