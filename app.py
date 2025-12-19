@@ -189,7 +189,7 @@ SHOP_COLORS.update({
     "Airport (Tokyo)": "#90CAF9",  # Soft Blue
     "Railroad Shop": "#BDBDBD"     # Grey
 })
-
+}
 
 SHOPS = sorted(list(set(details["b"] for details in RECIPES.values())))
 ITEM_LIST = [""] + sorted(list(RECIPES.keys()))
