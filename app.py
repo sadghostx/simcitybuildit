@@ -107,7 +107,7 @@ RECIPES = {
 SHOP_COLORS = {
     "Factory": "#E0E0E0", "Building Supplies": "#FFCCBC", "Hardware Store": "#D1C4E9",
     "Farmer's Market": "#C8E6C9", "Furniture Store": "#BBDEFB", "Donut Shop": "#F8BBD0",
-    "Fast Food": "#FFF9C4""Fashion Store": "#D1C4E9"  # A light purple/lavender "Gardening Supplies": "#A5D6A7"
+    "Fast Food": "#FFF9C4", "Fashion Store": "#D1C4E9", "Gardening Supplies": "#A5D6A7"
 }
 SHOPS = sorted(list(set(details["b"] for details in RECIPES.values())))
 ITEM_LIST = [""] + sorted(list(RECIPES.keys()))
