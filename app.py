@@ -95,20 +95,102 @@ RECIPES = {
     "Cheese Fries": {"ing": {"Vegetables": 1, "Cheese": 1}, "t": 20, "b": "Fast Food"},
     "Popcorn": {"ing": {"Corn": 2, "Microwave Oven": 1}, "t": 30, "b": "Fast Food"},
 
-    # -- REGIONAL ITEMS --
-    "Reusable Bag": {"ing": {"Recycled Fabric": 2}, "t": 20, "b": "Eco Shop"},
-    "Eco Shoes": {"ing": {"Recycled Fabric": 2, "Glue": 1, "Measuring Tape": 1}, "t": 45, "b": "Eco Shop"},
-    "Yoga Mat": {"ing": {"Recycled Fabric": 3, "Home Textiles": 1, "Paint": 1}, "t": 90, "b": "Eco Shop"},
-    "Motor Oil": {"ing": {"Crude Oil": 2}, "t": 60, "b": "Car Parts Shop"},
-    "Car Tire": {"ing": {"Crude Oil": 2, "Glue": 2, "Nails": 3}, "t": 90, "b": "Car Parts Shop"},
+# -- HOME APPLIANCES --
+    "BBQ Grill": {"ing": {"Metal": 3, "Cooking Utensils": 1}, "t": 165, "b": "Home Appliances"},
+    "Refrigerator": {"ing": {"Plastic": 2, "Chemicals": 2, "Electrical Components": 2}, "t": 210, "b": "Home Appliances"},
+    "Lighting System": {"ing": {"Chemicals": 1, "Glass": 1, "Electrical Components": 1}, "t": 105, "b": "Home Appliances"},
+    "TV": {"ing": {"Plastic": 2, "Glass": 2, "Electrical Components": 2}, "t": 150, "b": "Home Appliances"},
+    "Microwave Oven": {"ing": {"Metal": 4, "Glass": 1, "Electrical Components": 1}, "t": 120, "b": "Home Appliances"},
+
+
+# --- REGIONAL RAW MATERIALS (2025 UPDATED) ---
+    "Recycled Fabric": {"ing": {}, "t": 6, "b": "Eco-Factory"},
+    "Crude Oil": {"ing": {}, "t": 6, "b": "Oil Plant"},
+    "Fish": {"ing": {}, "t": 6, "b": "Fishery"},
+    "Coconut": {"ing": {}, "t": 6, "b": "Coconut Farm"},
+    "Silk": {"ing": {}, "t": 6, "b": "Mulberry Grove"},
+
+    # --- ECO SHOP (Green Valley) ---
+    "Reusable Bag": {"ing": {"Recycled Fabric": 2}, "t": 16, "b": "Eco Shop"},
+    "Ecological Shoes": {"ing": {"Recycled Fabric": 2, "Glue": 1, "Measuring Tape": 1}, "t": 90, "b": "Eco Shop"},
+    "Yoga Mat": {"ing": {"Recycled Fabric": 3, "Home Textile": 2, "Paint": 1}, "t": 180, "b": "Eco Shop"},
+
+    # --- CAR PARTS SHOP (Cactus Canyon) ---
+    "Motor Oil": {"ing": {"Crude Oil": 2}, "t": 16, "b": "Car Parts Shop"},
+    "Car Tire": {"ing": {"Crude Oil": 2, "Glue": 1, "Nails": 3}, "t": 96, "b": "Car Parts Shop"},
     "Engine": {"ing": {"Electrical Components": 1, "Drill": 1, "Nails": 3}, "t": 180, "b": "Car Parts Shop"},
+
+    # --- FISHING MARKETPLACE (Frosty Fjords) ---
+    "Canned Fish": {"ing": {"Fish": 1, "Metal": 1}, "t": 16, "b": "Fishing Marketplace"},
+    "Fish Soup": {"ing": {"Fish": 2, "Vegetables": 1, "Cooking Utensils": 2}, "t": 90, "b": "Fishing Marketplace"},
+    "Salmon Sandwich": {"ing": {"Fish": 2, "Bread Roll": 1}, "t": 180, "b": "Fishing Marketplace"},
+
+    # --- TROPICAL PRODUCTS STORE (Sunny Isles) ---
+    "Coconut Oil": {"ing": {"Coconut": 2}, "t": 16, "b": "Tropical Products Store"},
+    "Face Cream": {"ing": {"Coconut Oil": 2, "Chemicals": 2}, "t": 90, "b": "Tropical Products Store"},
+    "Tropical Drink": {"ing": {"Coconut": 2, "Fruit and Berries": 2, "Sugar and Spices": 1}, "t": 180, "b": "Tropical Products Store"},
+
+    # --- SILK STORE (Limestone Cliffs) ---
+    "String": {"ing": {"Silk": 2}, "t": 16, "b": "Silk Store"},
+    "Fan": {"ing": {"Silk": 2, "Wood": 1, "Glue": 2}, "t": 90, "b": "Silk Store"},
+    "Robe": {"ing": {"Silk": 3, "Paint": 2, "Home Textile": 1}, "t": 180, "b": "Silk Store"},
+    
+    # --- LONDON EXPORTS ---
+    "London Bus": {"ing": {}, "t": 0, "b": "Airport (London)"},
+    "Phone Box": {"ing": {}, "t": 0, "b": "Airport (London)"},
+    "Tea": {"ing": {}, "t": 0, "b": "Airport (London)"},
+
+    # --- PARIS EXPORTS ---
+    "Baguette": {"ing": {}, "t": 0, "b": "Airport (Paris)"},
+    "Beret": {"ing": {}, "t": 0, "b": "Airport (Paris)"},
+    "La Tour Eiffel": {"ing": {}, "t": 0, "b": "Airport (Paris)"},
+
+    # --- TOKYO EXPORTS ---
+    "Maneki-neko": {"ing": {}, "t": 0, "b": "Airport (Tokyo)"},
+    "Bonsai Tree": {"ing": {}, "t": 0, "b": "Airport (Tokyo)"},
+    "Lantern": {"ing": {}, "t": 0, "b": "Airport (Tokyo)"},
+
+    # --- RAILROAD ITEMS ---
+    "Conducting Wand": {"ing": {}, "t": 0, "b": "Railroad Shop"},
+    "Railroad Spike": {"ing": {}, "t": 0, "b": "Railroad Shop"},
+    "Train Signal": {"ing": {}, "t": 0, "b": "Railroad Shop"},
+    "Railroad Bolt": {"ing": {}, "t": 0, "b": "Railroad Shop"},
+    "Hatches": {"ing": {}, "t": 0, "b": "Railroad Shop"}
+
 }
 
 SHOP_COLORS = {
-    "Factory": "#E0E0E0", "Building Supplies": "#FFCCBC", "Hardware Store": "#D1C4E9",
-    "Farmer's Market": "#C8E6C9", "Furniture Store": "#BBDEFB", "Donut Shop": "#F8BBD0",
-    "Fast Food": "#FFF9C4", "Fashion Store": "#D1C4E9", "Gardening Supplies": "#A5D6A7"
-}
+    # -- BASE GAME SHOPS --
+    "Factory": "#E0E0E0",               # Light Grey
+    "Building Supplies": "#FFCCBC",     # Deep Orange
+    "Hardware Store": "#D1C4E9",        # Deep Purple
+    "Farmer's Market": "#C8E6C9",       # Green
+    "Furniture Store": "#BBDEFB",       # Blue
+    "Donut Shop": "#F8BBD0",            # Pink
+    "Fast Food": "#FFF9C4",             # Yellow
+    "Fashion Store": "#F48FB1",         # Hot Pink
+    "Gardening Supplies": "#A5D6A7",    # Pale Green
+    "Home Appliances": "#90A4AE",       # Blue Grey
+    "Health & Beauty": "#80CBC4",       # Teal
+
+      # -- SPECIALTY SHOPS --
+    "Sports Shop": "#E6EE9C",           # Lime Green
+    "Bureau of Restoration": "#D7CCC8", # Brownish Grey (Old Town)
+
+    # -- REGIONAL --
+    "Eco Shop": "#DCEDC8",
+    "Car Parts Shop": "#FFCC80",
+    "Fishing Marketplace": "#B3E5FC",
+    "Tropical Products Store": "#FFF59D",
+    "Silk Store": "#E1BEE7",
+SHOP_COLORS.update({
+    "Airport (London)": "#EF9A9A", # Soft Red
+    "Airport (Paris)": "#CE93D8",  # Soft Purple
+    "Airport (Tokyo)": "#90CAF9",  # Soft Blue
+    "Railroad Shop": "#BDBDBD"     # Grey
+})
+
+
 SHOPS = sorted(list(set(details["b"] for details in RECIPES.values())))
 ITEM_LIST = [""] + sorted(list(RECIPES.keys()))
 
