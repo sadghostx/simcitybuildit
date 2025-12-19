@@ -158,39 +158,31 @@ RECIPES = {
     "Hatches": {"ing": {}, "t": 0, "b": "Railroad Shop"}
 
 }
-
+# --- 3. SHOP COLORS ---
 SHOP_COLORS = {
-    # -- BASE GAME SHOPS --
-    "Factory": "#E0E0E0",               # Light Grey
-    "Building Supplies": "#FFCCBC",     # Deep Orange
-    "Hardware Store": "#D1C4E9",        # Deep Purple
-    "Farmer's Market": "#C8E6C9",       # Green
-    "Furniture Store": "#BBDEFB",       # Blue
-    "Donut Shop": "#F8BBD0",            # Pink
-    "Fast Food": "#FFF9C4",             # Yellow
-    "Fashion Store": "#F48FB1",         # Hot Pink
-    "Gardening Supplies": "#A5D6A7",    # Pale Green
-    "Home Appliances": "#90A4AE",       # Blue Grey
-    "Health & Beauty": "#80CBC4",       # Teal
-
-      # -- SPECIALTY SHOPS --
-    "Sports Shop": "#E6EE9C",           # Lime Green
-    "Bureau of Restoration": "#D7CCC8", # Brownish Grey (Old Town)
-
-    # -- REGIONAL --
+    "Factory": "#E0E0E0",
+    "Building Supplies": "#FFCCBC",
+    "Hardware Store": "#D1C4E9",
+    "Farmer's Market": "#C8E6C9",
+    "Furniture Store": "#BBDEFB",
+    "Donut Shop": "#F8BBD0",
+    "Fast Food": "#FFF9C4",
+    "Fashion Store": "#F48FB1",
+    "Gardening Supplies": "#A5D6A7",
+    "Home Appliances": "#90A4AE",
+    "Health & Beauty": "#80CBC4",
+    "Sports Shop": "#E6EE9C",
+    "Bureau of Restoration": "#D7CCC8",
     "Eco Shop": "#DCEDC8",
     "Car Parts Shop": "#FFCC80",
     "Fishing Marketplace": "#B3E5FC",
     "Tropical Products Store": "#FFF59D",
     "Silk Store": "#E1BEE7",
-SHOP_COLORS.update({
-    "Airport (London)": "#EF9A9A", # Soft Red
-    "Airport (Paris)": "#CE93D8",  # Soft Purple
-    "Airport (Tokyo)": "#90CAF9",  # Soft Blue
-    "Railroad Shop": "#BDBDBD"     # Grey
-})
+    "Airport (London)": "#EF9A9A",
+    "Airport (Paris)": "#CE93D8",
+    "Airport (Tokyo)": "#90CAF9",
+    "Railroad Shop": "#BDBDBD"
 }
-
 SHOPS = sorted(list(set(details["b"] for details in RECIPES.values())))
 ITEM_LIST = [""] + sorted(list(RECIPES.keys()))
 
