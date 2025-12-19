@@ -176,7 +176,7 @@ def render_tile(line1, line2, key, color="#FFFFFF", icon="", can_add=False, is_r
             source_suffix = f" ({reg})"
 
         cb1, cb2 = st.columns(2)
-        priority = cb1.checkbox("Prio", key=f"prio_{key}", disabled=is_done)
+        priority = cb1.checkbox("Priority", key=f"prio_{key}", disabled=is_done)
         done = cb2.checkbox("Done", key=f"done_{key}")
             
         for i in range(slot_count):
