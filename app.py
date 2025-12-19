@@ -187,284 +187,143 @@ SHOPS = sorted(list(set(details["b"] for details in RECIPES.values())))
 ITEM_LIST = [""] + sorted(list(RECIPES.keys()))
 
 st.set_page_config(layout="wide", page_title="SimCity BuildIt Planner by sgx")
+# --- 3. STATE INITIALIZATION & FUNCTIONS ---
+if "reset_ver" not in st.session_state: 
+    st.session_state.reset_ver = 0
 
+# Fix 1: Ensure this function is defined BEFORE Section 5 (the sidebar)
+def reset_warehouse_only():
+    """Wipes ONLY the inventory/production numbers."""
+    st.session_state.inv = {itm: 0 for itm in RECIPES}
+    st.session_state.prod = {itm: 0 for itm in RECIPES}
+    # Fix 2: Removed the stray dot that was causing the SyntaxError
+    st.session_state.reset_ver += 1
+    st.rerun()
 
-# --- 3. CSS & STYLING ---
-st.markdown(
-    f"""
+def force_reset():
+    """Wipes everything: Warehouse AND Planning Tiles."""
+    for key in list(st.session_state.keys()):
+        if key != "reset_ver":
+            del st.session_state[key]
+    st.session_state.reset_ver += 1
+    st.rerun()# --- 4. CSS ---
+st.markdown("""
     <style>
-    /* 1. Tab Bar and Navigation Size */
-    button[data-baseweb="tab"] {{
-        height: 55px !important; 
-        padding-left: 20px !important;
-        padding-right: 20px !important;
-    }}
-
-    /* Adjusted Tab Font Size */
-    button[data-baseweb="tab"] p {{
-        font-size: 20px !important; 
-        font-weight: 600 !important;   
-        color: #444 !important;
-        margin: 0 !important;
-    }}
-
-    /* Make the active tab text a different color */
-    button[data-baseweb="tab"][aria-selected="true"] p {{
-        color: #80CBC4 !important; 
-    }}
-
-    /* 2. Grid & Row Alignment Fixes */
-    [data-testid="stHorizontalBlock"] {{
-        display: flex !important;
-        flex-direction: row !important;
-        flex-wrap: nowrap !important; 
-        align-items: stretch !important; 
-        gap: 0.5rem !important;
-        margin-bottom: 10px !important;
-    }}
-
-    [data-testid="column"] {{
-        flex: 1 1 0% !important;
-        min-width: 0 !important;
-        width: 100% !important;
-    }}
-
-    /* 3. The Tile Card */
-    .tile-card {{
-        background: white;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        width: 100%;
-        height: 100%; 
-        margin-bottom: 15px;
-        padding: 8px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        display: flex;
-        flex-direction: column;
-    }}
-    
-    .tile-header {{
-        padding: 10px;
-        border-radius: 8px 8px 0 0;
-        text-align: center;
-        font-weight: bold;
-        font-size: 18px;
-        margin: -8px -8px 10px -8px; 
-    }}
-
-    /* 4. Widget Optimization */
-    .stSelectbox div[data-baseweb="select"] {{
-        font-size: 16px !important;
-        min-height: 32px !important;
-    }}
-    
-    .stNumberInput input {{
-        height: 32px !important;
-        font-size: 16px !important;
-        text-align: center !important;
-    }}
-    
-    /* Hide spin buttons for cleaner look on small tiles */
-    button[step] {{ 
-        display: none !important; 
-    }}
-
-    [data-testid="stCheckbox"] {{
-        margin-bottom: 0px !important;
-        padding: 2px !important;
-    }}
-
-    [data-testid="stCheckbox"] label p {{
-        font-size: 12px !important;
-    }}
-
-    .stButton button {{
-        font-size: 12px !important;
-        padding: 2px 10px !important;
-        min-height: 30px !important;
-    }}
-
-    /* Sidebar Compression */
-    [data-testid="stSidebar"] .stNumberInput input {{
-        padding: 2px !important;
-        font-size: 18px !important;
-        height: 20px !important;
-    }}
+    .tile-card { background: white; border: 1px solid #ddd; border-radius: 10px; padding: 8px; margin-bottom: 10px; }
+    .tile-header { padding: 10px; border-radius: 8px 8px 0 0; text-align: center; font-weight: bold; margin: -8px -8px 10px -8px; }
+    .analysis-html-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .analysis-html-table th, .analysis-html-table td { border: 1px solid #eee; padding: 6px; }
+    div.stButton > button:first-child[key^="res_"] { background-color: #ff4b4b; color: white; border: none; }
+    div.stButton > button:hover[key^="res_"] { background-color: #ff3333; color: white; }
     </style>
-    """,
-    unsafe_allow_html=True
-)
+    """, unsafe_allow_html=True)
 
-# --- 4. SIDEBAR (WAREHOUSE) ---
+
+
+# --- 5. SIDEBAR (WAREHOUSE) ---
 with st.sidebar:
     st.header("📦 Warehouse")
     
-    # Header for the Inventory system
-    h_col1, h_col2, h_col3 = st.columns([2, 1, 1])
-    h_col1.markdown("<small>**ITEM**</small>", unsafe_allow_html=True)
-    h_col2.markdown("<small>**QTY**</small>", unsafe_allow_html=True)
-    h_col3.markdown("<small>**PROD**</small>", unsafe_allow_html=True)
+    # This button now ONLY clears the counts, not your planning tiles
+    if st.button("🧹 Reset Warehouse", use_container_width=True, key="res_warehouse_only"):
+        reset_warehouse_only()
+     
     st.divider()
-
-    # Initialize session state for inventory if not exists
-    if "inv" not in st.session_state:
-        st.session_state.inv = {itm: 0 for itm in RECIPES}
-    if "prod" not in st.session_state:
-        st.session_state.prod = {itm: 0 for itm in RECIPES}
-
-    # Populate Sidebar Rows
+    h1, h2, h3 = st.columns([2, 1, 1])
+    h1.markdown("**ITEM**"); h2.markdown("**HAVE**"); h3.markdown("**PROD**")
+    
     for itm in sorted(RECIPES.keys()):
-        row_c1, row_c2, row_c3 = st.columns([2, 1, 1])
-        with row_c1:
-            st.markdown(f"<div style='font-size: 13px; padding-top: 5px;'>{itm}</div>", unsafe_allow_html=True)
-        with row_c2:
-            st.session_state.inv[itm] = st.number_input("H", 0, 999, key=f"inv_{itm}", label_visibility="collapsed")
-        with row_c3:
-            st.session_state.prod[itm] = st.number_input("P", 0, 999, key=f"prd_{itm}", label_visibility="collapsed")
+        c1, c2, c3 = st.columns([2, 1, 1])
+        c1.markdown(f"<div style='font-size:12px; padding-top:5px;'>{itm}</div>", unsafe_allow_html=True)
+        
+        # We use .get() and reset_ver to ensure the boxes update immediately when cleared
+        st.session_state.inv[itm] = c2.number_input(
+            "H", 0, 999, 
+            value=st.session_state.inv.get(itm, 0), 
+            key=f"wh_{itm}_{st.session_state.reset_ver}", 
+            label_visibility="collapsed"
+        )
+        st.session_state.prod[itm] = c3.number_input(
+            "P", 0, 999, 
+            value=st.session_state.prod.get(itm, 0), 
+            key=f"pr_{itm}_{st.session_state.reset_ver}", 
+            label_visibility="collapsed"
+        )
 
-# --- 5. RENDER FUNCTION ---
+
+# --- 6. RENDER FUNCTION ---
 def render_tile(line1, line2, key, color="#FFFFFF", icon="", can_add=False, is_res=False):
-    unique_id = f"{key}_{line1.lower().replace(' ', '')}"
+    unique_id = f"tile_{key}_{line2.lower().replace(' ', '_')}"
     slot_key = f"slots_{unique_id}"
-    
-    if slot_key not in st.session_state: 
-        st.session_state[slot_key] = 3
-    
+    if slot_key not in st.session_state: st.session_state[slot_key] = 3
     items_found = []
-
     st.markdown(f'<div class="tile-card"><div class="tile-header" style="background:{color}">{icon} {line1} - {line2}</div>', unsafe_allow_html=True)
-    
-    if is_res:
-        st.selectbox("Region", REGIONS, key=f"reg_{unique_id}", label_visibility="collapsed")
-    
+    if is_res: st.selectbox("Region", REGIONS, key=f"reg_{unique_id}", label_visibility="collapsed")
     c1, c2 = st.columns(2)
-    with c1: prio = st.checkbox("Priority", key=f"prio_{unique_id}")
-    with c2: done = st.checkbox("Done", key=f"done_{unique_id}")
-
+    prio, done = c1.checkbox("Priority", key=f"prio_{unique_id}"), c2.checkbox("Done", key=f"done_{unique_id}")
     for i in range(st.session_state[slot_key]):
-        ci, cq = st.columns(2)
+        ci, cq = st.columns([3, 1])
         itm = ci.selectbox("Item", ITEM_LIST, key=f"i_{unique_id}_{i}", label_visibility="collapsed", disabled=done)
         qty = cq.number_input("Qty", 0, 99, key=f"q_{unique_id}_{i}", label_visibility="collapsed", disabled=done)
         if itm and qty > 0 and not done:
-            items_found.append({"item": itm, "qty": qty, "priority": prio, "source": line2})
-    
+            items_found.append({"item": itm, "qty": qty, "priority": prio})
     if can_add and not done:
         if st.button("＋ Add Slot", key=f"btn_{unique_id}", use_container_width=True):
             st.session_state[slot_key] += 1
             st.rerun()
-
     st.markdown('</div>', unsafe_allow_html=True)
     return items_found
 
-# --- 6. MAIN APP TABS ---
-st.title("SimCity BuildIt Planner")
+# --- 7. TABS ---
 t_ord, t_res, t_exp, t_ana = st.tabs(["🚀 Orders", "🏠 Residential", "🚛 Exports", "📊 Analysis"])
-
-all_requirements = []
+all_reqs = []
 
 with t_ord:
-    st.markdown("### Delivery Tasks")
-    o_cols = st.columns(2, gap='large')
-    order_specs = [
-        ("War", "Deliveries", "war", "#FFCDD2", "⚔️"),
-        ("Cargo", "Ship", "ship", "#C8E6C9", "🚢"),
-        ("London", "Airport", "lon", "#BBDEFB", "✈️"),
-        ("Tokyo", "Airport", "tok", "#BBDEFB", "✈️"),
-        ("Paris", "Airport", "par", "#BBDEFB", "✈️"),
-        ("Epic", "Project", "epic", "#FFE0B2", "💎", True)
-    ]
-    for idx, spec in enumerate(order_specs):
-        with o_cols[idx % 2]:
-            all_requirements += render_tile(*spec)
+    if st.button("🗑️ Reset All App Data", key="res_ord", use_container_width=True): reset_all_data()
+    o_cols = st.columns(2)
+    specs = [("War", "Deliveries", "war", "#FFCDD2", "⚔️"), ("Cargo", "Ship", "ship", "#C8E6C9", "🚢"), ("London", "Airport", "lon", "#BBDEFB", "✈️"), ("Tokyo", "Airport", "tok", "#BBDEFB", "✈️"), ("Paris", "Airport", "par", "#BBDEFB", "✈️"), ("Epic", "Project", "epic", "#FFE0B2", "💎", True)]
+    for idx, s in enumerate(specs):
+        with o_cols[idx % 2]: all_reqs += render_tile(*s)
 
 with t_res:
-    st.markdown("### Residential Units")
-    r_cols = st.columns(2, gap='large')
+    if st.button("🗑️ Reset All App Data", key="res_res", use_container_width=True): reset_all_data()
+    r_cols = st.columns(2)
     for i in range(6):
-        with r_cols[i % 2]:
-            all_requirements += render_tile("Residential", f"Unit {i+1}", f"res_{i}", "#E1BEE7", "🏠", True, True)
+        with r_cols[i % 2]: all_reqs += render_tile("Residential", f"Unit {i+1}", f"res_{i}", "#E1BEE7", "🏠", True, True)
 
 with t_exp:
-    st.markdown("### Regional Exports")
-    if 'hq_count' not in st.session_state: st.session_state.hq_count = 1
-    e_cols = st.columns(2, gap='large')
-    export_specs = [
-        ("Export", "Green Valley", "gv", "#F0F4C3", "🍃"),
-        ("Export", "Cactus Canyon", "cc", "#F0F4C3", "🌵"),
-        ("Export", "Sunny Isles", "si", "#F0F4C3", "☀️"),
-        ("Export", "Frosty Fjords", "ff", "#F0F4C3", "❄️"),
-        ("Export", "Limestone", "lc", "#F0F4C3", "🗿")
-    ]
-    for idx, spec in enumerate(export_specs):
-        with e_cols[idx % 2]:
-            all_requirements += render_tile(*spec)
-            
+    if st.button("🗑️ Reset All App Data", key="res_exp", use_container_width=True): reset_all_data()
+    e_cols = st.columns(2)
+    ex_specs = [("Export", "Green Valley", "gv", "#F0F4C3", "🍃"), ("Export", "Cactus Canyon", "cc", "#F0F4C3", "🌵"), ("Export", "Sunny Isles", "si", "#F0F4C3", "☀️"), ("Export", "Frosty Fjords", "ff", "#F0F4C3", "❄️"), ("Export", "Limestone", "lc", "#F0F4C3", "🗿")]
+    for idx, s in enumerate(ex_specs):
+        with e_cols[idx % 2]: all_reqs += render_tile(*s)
     for i in range(st.session_state.hq_count):
-        with e_cols[(len(export_specs) + i) % 2]:
-            all_requirements += render_tile("Export", f"HQ {i+1}", f"hq_{i}", "#D1C4E9", "🏢", True)
-    
-    if st.button("＋ Add HQ Tile"):
-        st.session_state.hq_count += 1
-        st.rerun()
+        with e_cols[i % 2]: all_reqs += render_tile("Export", f"HQ {i+1}", f"hq_{i}", "#D1C4E9", "🏢", True)
+    if st.button("＋ Add HQ Tile"): st.session_state.hq_count += 1; st.rerun()
 
-# --- 7. ANALYSIS LOGIC ---
 with t_ana:
-    st.markdown("### Resource Calculation")
-    if st.button("🚀 RUN ANALYSIS", use_container_width=True):
+    if st.button("🗑️ Reset All App Data", key="res_ana", use_container_width=True): reset_all_data()
+    if st.button("🚀 RUN ANALYSIS", use_container_width=True, key="run_main"):
         master = {}
-        prio_items = set()
-
-        def solve(itm, q, is_prio):
-            if not itm or itm not in RECIPES: return
-            if is_prio: prio_items.add(itm)
+        prio_set = set()
+        def solve(itm, q, p):
+            if itm not in RECIPES: return
+            if p: prio_set.add(itm)
             master[itm] = master.get(itm, 0) + q
-            for ing, ing_qty in RECIPES[itm].get("ing", {}).items():
-                solve(ing, ing_qty * q, is_prio)
-
-        for task in all_requirements:
-            solve(task['item'], task['qty'], task.get('priority', False))
-
+            for ing, iq in RECIPES[itm].get("ing", {}).items(): solve(ing, iq * q, p)
+        for task in all_reqs: solve(task['item'], task['qty'], task['priority'])
+        
         final = []
-        for itm, total in master.items():
-            have = st.session_state.inv.get(itm, 0)
-            prod = st.session_state.prod.get(itm, 0)
-            diff = total - have - prod
-            
+        for itm, goal in master.items():
+            h, p = st.session_state.inv.get(itm, 0), st.session_state.prod.get(itm, 0)
+            diff = goal - h - p
             if diff > 0:
-                final.append({
-                    "Priority": "🔴 High" if itm in prio_items else "⚪ Normal",
-                    "Item": itm, 
-                    "Make": int(diff), 
-                    "Shop": RECIPES[itm]["b"], 
-                    "Time": RECIPES[itm]['t'] * diff
-                })
-
+                final.append({"Priority": "🔴 High" if itm in prio_set else "⚪ Normal", "Item": itm, "Goal": int(goal), "Have": int(h), "Prod": int(p), "Make": int(diff), "Shop": RECIPES[itm]["b"], "Time": f"{int(RECIPES[itm]['t'] * diff)}m"})
         if final:
             df = pd.DataFrame(final).sort_values(["Priority", "Shop"])
-            
-            # Factories
-            st.subheader("🏭 Factory Queue")
-            factory_df = df[df['Shop'].str.contains("Factory|Plant|Grove|Farm|Fishery")]
-            st.table(factory_df[['Priority', 'Item', 'Make']])
-            
-            # Shops
-            st.subheader("🏪 Store Queue")
-            shop_df = df[~df['Shop'].str.contains("Factory|Plant|Grove|Farm|Fishery")].copy()
-            
-            # Style the Shop names with badges
-            display_df = shop_df.copy()
-            for index, row in display_df.iterrows():
-                color = SHOP_COLORS.get(row['Shop'], "#E0E0E0")
-                display_df.at[index, 'Shop'] = f'<span style="background-color:{color}; padding: 2px 8px; border-radius: 4px; color: black;">{row["Shop"]}</span>'
-                display_df.at[index, 'Time'] = f"{int(row['Time'])}m"
-            
-            st.write(display_df.to_html(escape=False, index=False), unsafe_allow_html=True)
-
-            # Shop Load Summary
-            st.markdown("---")
-            st.subheader("⏱️ Total Shop Load")
-            load = shop_df.groupby("Shop")["Time"].sum().reset_index()
-            load["Time"] = load["Time"].apply(lambda x: f"{int(x//60)}h {int(x%60)}m" if x >= 60 else f"{int(x)}m")
-            st.table(load)
+            for index, row in df.iterrows():
+                c = SHOP_COLORS.get(row['Shop'], "#E0E0E0")
+                df.at[index, 'Shop'] = f'<span style="background-color:{c}; padding: 2px 8px; border-radius: 4px; color: black; font-weight: bold;">{row["Shop"]}</span>'
+            st.write(df.to_html(escape=False, index=False, classes="analysis-html-table"), unsafe_allow_html=True)
         else:
-            st.success("✅ Warehouse ready!")
+            st.success("✅ Warehouse covers all needs!")
