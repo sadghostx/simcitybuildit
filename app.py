@@ -186,17 +186,31 @@ SHOP_COLORS = {
 SHOPS = sorted(list(set(details["b"] for details in RECIPES.values())))
 ITEM_LIST = [""] + sorted(list(RECIPES.keys()))
 
+
 st.set_page_config(layout="wide", page_title="SimCity BuildIt Planner by sgx")
+
 # --- 3. STATE INITIALIZATION & FUNCTIONS ---
+
+# 1. Initialize the version counter
 if "reset_ver" not in st.session_state: 
     st.session_state.reset_ver = 0
 
-# Fix 1: Ensure this function is defined BEFORE Section 5 (the sidebar)
+# 2. Initialize the Warehouse (inv) and Production (prod) dictionaries
+# This MUST happen before Section 5 tries to read them
+if "inv" not in st.session_state: 
+    st.session_state.inv = {itm: 0 for itm in RECIPES}
+
+if "prod" not in st.session_state: 
+    st.session_state.prod = {itm: 0 for itm in RECIPES}
+
+if "hq_count" not in st.session_state: 
+    st.session_state.hq_count = 1
+
+# 3. Define the Reset Functions
 def reset_warehouse_only():
     """Wipes ONLY the inventory/production numbers."""
     st.session_state.inv = {itm: 0 for itm in RECIPES}
     st.session_state.prod = {itm: 0 for itm in RECIPES}
-    # Fix 2: Removed the stray dot that was causing the SyntaxError
     st.session_state.reset_ver += 1
     st.rerun()
 
@@ -205,16 +219,73 @@ def force_reset():
     for key in list(st.session_state.keys()):
         if key != "reset_ver":
             del st.session_state[key]
+    # Re-initialize basic needs after deletion
+    st.session_state.inv = {itm: 0 for itm in RECIPES}
+    st.session_state.prod = {itm: 0 for itm in RECIPES}
+    st.session_state.hq_count = 1
     st.session_state.reset_ver += 1
-    st.rerun()# --- 4. CSS ---
+    st.rerun()
+
+# --- 4. CSS (UI STYLING) ---
 st.markdown("""
     <style>
-    .tile-card { background: white; border: 1px solid #ddd; border-radius: 10px; padding: 8px; margin-bottom: 10px; }
-    .tile-header { padding: 10px; border-radius: 8px 8px 0 0; text-align: center; font-weight: bold; margin: -8px -8px 10px -8px; }
-    .analysis-html-table { width: 100%; border-collapse: collapse; font-size: 14px; }
-    .analysis-html-table th, .analysis-html-table td { border: 1px solid #eee; padding: 6px; }
-    div.stButton > button:first-child[key^="res_"] { background-color: #ff4b4b; color: white; border: none; }
-    div.stButton > button:hover[key^="res_"] { background-color: #ff3333; color: white; }
+    /* Main Tile Cards */
+    .tile-card { 
+        background: white; 
+        border: 1px solid #ddd; 
+        border-radius: 10px; 
+        padding: 10px; 
+        margin-bottom: 15px; 
+        box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+    }
+    
+    /* Headers inside the tiles */
+    .tile-header { 
+        padding: 10px; 
+        border-radius: 8px 8px 0 0; 
+        text-align: center; 
+        font-weight: bold; 
+        margin: -10px -10px 10px -10px; 
+        color: #333;
+    }
+
+    /* Analysis Table Styling */
+    .analysis-html-table { 
+        width: 100%; 
+        border-collapse: collapse; 
+        font-size: 14px; 
+        text-align: left; 
+        margin-top: 20px;
+    }
+    .analysis-html-table th { 
+        background-color: #f8f9fa; 
+        color: #333; 
+        padding: 10px; 
+        border-bottom: 2px solid #dee2e6; 
+    }
+    .analysis-html-table td { 
+        border-bottom: 1px solid #eee; 
+        padding: 8px; 
+    }
+
+    /* Red Reset Buttons */
+    div.stButton > button:first-child[key^="res_"] { 
+        background-color: #ff4b4b; 
+        color: white; 
+        border: none; 
+        border-radius: 5px;
+        transition: 0.3s;
+    }
+    div.stButton > button:hover[key^="res_"] { 
+        background-color: #d32f2f; 
+        color: white; 
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    /* Sidebar spacing fix */
+    [data-testid="stSidebar"] .stNumberInput {
+        margin-bottom: -15px;
+    }
     </style>
     """, unsafe_allow_html=True)
 
